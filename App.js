@@ -24,7 +24,10 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import ToastExample from './ToastExample';
+
 const App: () => React$Node = () => {
+  ToastExample.show('Hello Ali Bala', ToastExample.LONG);
   return (
     <>
       <StatusBar barStyle="dark-content" />
