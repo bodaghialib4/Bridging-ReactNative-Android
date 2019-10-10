@@ -4,12 +4,15 @@ package com.test_bridge;
 
 import android.widget.Toast;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.IllegalViewOperationException;
 
 import java.util.Map;
@@ -57,7 +60,7 @@ public class ToastModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void paintMessage(
+  public void paintMessageCallback(
           String message,
           Callback errorCallback,
           Callback successCallback) {
@@ -72,5 +75,22 @@ public class ToastModule extends ReactContextBaseJavaModule {
     }
   }
 
+  private static final String ERROR = "error";
+  @ReactMethod
+  public void paintMessagePromise(
+          String message,
+          Promise promise) {
+    try {
+      WritableMap map = Arguments.createMap();
+      String paintedMessage = message;
+      paintedMessage = paintedMessage.replaceAll(" "," ** ");
+      paintedMessage = paintedMessage.replaceAll("_"," * ");
+      paintedMessage = "***  " + paintedMessage+"  ****";
+      map.putString("paintedMessage", paintedMessage);
+      promise.resolve(map);
+    } catch (IllegalViewOperationException e) {
+      promise.reject(ERROR, e);
+    }
+  }
 
 }

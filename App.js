@@ -6,7 +6,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -26,61 +26,88 @@ import {
 
 import ToastExample from './ToastExample';
 
-const App: () => React$Node = () => {
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+  }
 
-  ToastExample.paintMessage('Hello Ali_Bala',
-    (error) => {
+  componentDidMount(){
+    this.testingBridge()
+  }
+
+  async testingBridge() {
+    //test show function
+    ToastExample.show('Ali Bala testing show', ToastExample.LONG);
+
+    //test callback function
+    ToastExample.paintMessageCallback('Hello Ali_Bala testing callback',
+      (error) => {
+        ToastExample.show('error', ToastExample.LONG);
+        console.log(error);
+      }
+      ,
+      (paintedMessage) => {
+        ToastExample.show(paintedMessage, ToastExample.LONG);
+      });
+
+//test promise function
+    let {paintedMessage,error} = await ToastExample.paintMessagePromise('Hello Ali_Bala testing promise');
+    if (error) {
       ToastExample.show('error', ToastExample.LONG);
       console.log(error);
-    },
-    (paintedMessage) => {
+    }else{
       ToastExample.show(paintedMessage, ToastExample.LONG);
-    });
-  return (
-    <>
-      <StatusBar barStyle="dark-content"/>
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header/>
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
+    }
+  }
+
+  render() {
+    return (
+      <>
+        <StatusBar barStyle="dark-content"/>
+        <SafeAreaView>
+          <ScrollView
+            contentInsetAdjustmentBehavior="automatic"
+            style={styles.scrollView}>
+            <Header/>
+            {global.HermesInternal == null ? null : (
+              <View style={styles.engine}>
+                <Text style={styles.footer}>Engine: Hermes</Text>
+              </View>
+            )}
+            <View style={styles.body}>
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>Step One</Text>
+                <Text style={styles.sectionDescription}>
+                  Edit <Text style={styles.highlight}>App.js</Text> to change this
+                  screen and then come back to see your edits.
+                </Text>
+              </View>
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>See Your Changes</Text>
+                <Text style={styles.sectionDescription}>
+                  <ReloadInstructions/>
+                </Text>
+              </View>
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>Debug</Text>
+                <Text style={styles.sectionDescription}>
+                  <DebugInstructions/>
+                </Text>
+              </View>
+              <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>Learn More</Text>
+                <Text style={styles.sectionDescription}>
+                  Read the docs to discover what to do next:
+                </Text>
+              </View>
+              <LearnMoreLinks/>
             </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions/>
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions/>
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks/>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
+          </ScrollView>
+        </SafeAreaView>
+      </>
+    );
+  }
+
 };
 
 const styles = StyleSheet.create({
@@ -122,4 +149,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
