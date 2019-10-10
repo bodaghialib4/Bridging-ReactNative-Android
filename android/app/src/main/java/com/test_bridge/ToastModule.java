@@ -13,10 +13,13 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.IllegalViewOperationException;
 
 import java.util.Map;
 import java.util.HashMap;
+
+import javax.annotation.Nullable;
 
 public class ToastModule extends ReactContextBaseJavaModule {
   private static ReactApplicationContext reactContext;
@@ -40,6 +43,14 @@ public class ToastModule extends ReactContextBaseJavaModule {
     constants.put(DURATION_SHORT_KEY, Toast.LENGTH_SHORT);
     constants.put(DURATION_LONG_KEY, Toast.LENGTH_LONG);
     return constants;
+  }
+
+  private void sendEvent(ReactContext reactContext,
+                         String eventName,
+                         @Nullable WritableMap params) {
+    reactContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+            .emit(eventName, params);
   }
 
 
@@ -66,9 +77,9 @@ public class ToastModule extends ReactContextBaseJavaModule {
           Callback successCallback) {
     try {
       String paintedMessage = message;
-      paintedMessage = paintedMessage.replaceAll(" "," ** ");
-      paintedMessage = paintedMessage.replaceAll("_"," * ");
-      paintedMessage = "***  " + paintedMessage+"  ****";
+      paintedMessage = paintedMessage.replaceAll(" ", " ** ");
+      paintedMessage = paintedMessage.replaceAll("_", " * ");
+      paintedMessage = "***  " + paintedMessage + "  ****";
       successCallback.invoke(paintedMessage);
     } catch (IllegalViewOperationException e) {
       errorCallback.invoke(e.getMessage());
@@ -76,6 +87,7 @@ public class ToastModule extends ReactContextBaseJavaModule {
   }
 
   private static final String ERROR = "error";
+
   @ReactMethod
   public void paintMessagePromise(
           String message,
@@ -83,13 +95,30 @@ public class ToastModule extends ReactContextBaseJavaModule {
     try {
       WritableMap map = Arguments.createMap();
       String paintedMessage = message;
-      paintedMessage = paintedMessage.replaceAll(" "," ** ");
-      paintedMessage = paintedMessage.replaceAll("_"," * ");
-      paintedMessage = "***  " + paintedMessage+"  ****";
+      paintedMessage = paintedMessage.replaceAll(" ", " ** ");
+      paintedMessage = paintedMessage.replaceAll("_", " * ");
+      paintedMessage = "***  " + paintedMessage + "  ****";
       map.putString("paintedMessage", paintedMessage);
       promise.resolve(map);
     } catch (IllegalViewOperationException e) {
       promise.reject(ERROR, e);
+    }
+  }
+
+  @ReactMethod
+  public void paintMessageEvent(String message) {
+    WritableMap params = Arguments.createMap();
+    try {
+      String paintedMessage = message;
+      paintedMessage = paintedMessage.replaceAll(" ", " ** ");
+      paintedMessage = paintedMessage.replaceAll("_", " * ");
+      paintedMessage = "***  " + paintedMessage + "  ****";
+      params.putString("paintedMessage", paintedMessage);
+      sendEvent(reactContext, "MessagePaintingEvent", params);
+
+    } catch (IllegalViewOperationException e) {
+      params.putBoolean("error", true);
+      sendEvent(reactContext, "MessagePaintingEvent", params);
     }
   }
 

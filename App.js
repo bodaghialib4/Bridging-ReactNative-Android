@@ -14,6 +14,8 @@ import {
   View,
   Text,
   StatusBar,
+  NativeEventEmitter,
+  NativeModules,
 } from 'react-native';
 
 import {
@@ -31,8 +33,8 @@ export default class App extends Component {
     super(props);
   }
 
-  componentDidMount(){
-    this.testingBridge()
+  componentDidMount() {
+    this.testingBridge();
   }
 
   async testingBridge() {
@@ -50,14 +52,24 @@ export default class App extends Component {
         ToastExample.show(paintedMessage, ToastExample.LONG);
       });
 
-//test promise function
-    let {paintedMessage,error} = await ToastExample.paintMessagePromise('Hello Ali_Bala testing promise');
+    //test promise function
+    let {paintedMessage, error} = await ToastExample.paintMessagePromise('Hello Ali_Bala testing promise');
     if (error) {
       ToastExample.show('error', ToastExample.LONG);
-      console.log(error);
-    }else{
+    } else {
       ToastExample.show(paintedMessage, ToastExample.LONG);
     }
+
+    //test event function
+    const eventEmitter = new NativeEventEmitter(NativeModules.ToastExample);
+    eventEmitter.addListener('MessagePaintingEvent', (event) => {
+      if (event.error) {
+        ToastExample.show('error', ToastExample.LONG);
+      } else {
+        ToastExample.show(event.paintedMessage, ToastExample.LONG);
+      }
+    });
+    ToastExample.paintMessageEvent('Hello Ali_Bala testing event');
   }
 
   render() {
