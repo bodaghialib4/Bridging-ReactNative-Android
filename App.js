@@ -70,6 +70,22 @@ export default class App extends Component {
       }
     });
     ToastExample.paintMessageEvent('Hello Ali_Bala testing event');
+
+    //test startActivityForResult
+    setTimeout(async () => {
+      ToastExample.show("testing pickImage", ToastExample.SHORT);
+      ToastExample.pickImage()
+        .then((value)=>{
+          ToastExample.show("Hello Ali_Bala testing startActivityForResult passed", ToastExample.LONG);
+          ToastExample.show("URI: " + URI, ToastExample.LONG);
+        })
+        .catch((error)=>{
+          ToastExample.show('error', ToastExample.LONG);
+          console.log(error);
+        });
+    }, 15000);
+
+
   }
 
   render() {
