@@ -27,15 +27,23 @@ import {
 import ToastExample from './ToastExample';
 
 const App: () => React$Node = () => {
-  ToastExample.show('Hello Ali Bala', ToastExample.LONG);
+
+  ToastExample.paintMessage('Hello Ali_Bala',
+    (error) => {
+      ToastExample.show('error', ToastExample.LONG);
+      console.log(error);
+    },
+    (paintedMessage) => {
+      ToastExample.show(paintedMessage, ToastExample.LONG);
+    });
   return (
     <>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="dark-content"/>
       <SafeAreaView>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
-          <Header />
+          <Header/>
           {global.HermesInternal == null ? null : (
             <View style={styles.engine}>
               <Text style={styles.footer}>Engine: Hermes</Text>
@@ -52,13 +60,13 @@ const App: () => React$Node = () => {
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>See Your Changes</Text>
               <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
+                <ReloadInstructions/>
               </Text>
             </View>
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>Debug</Text>
               <Text style={styles.sectionDescription}>
-                <DebugInstructions />
+                <DebugInstructions/>
               </Text>
             </View>
             <View style={styles.sectionContainer}>
@@ -67,7 +75,7 @@ const App: () => React$Node = () => {
                 Read the docs to discover what to do next:
               </Text>
             </View>
-            <LearnMoreLinks />
+            <LearnMoreLinks/>
           </View>
         </ScrollView>
       </SafeAreaView>
