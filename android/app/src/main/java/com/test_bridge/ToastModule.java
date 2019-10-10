@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.BaseActivityEventListener;
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
@@ -26,7 +27,7 @@ import java.util.HashMap;
 
 import javax.annotation.Nullable;
 
-public class ToastModule extends ReactContextBaseJavaModule {
+public class ToastModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
   private static ReactApplicationContext reactContext;
 
   //for show
@@ -50,6 +51,9 @@ public class ToastModule extends ReactContextBaseJavaModule {
     //for startActivityForResult
     // Add the listener for `onActivityResult`
     context.addActivityEventListener(mActivityEventListener);
+
+    //for Listening to LifeCycle events
+    context.addLifecycleEventListener(this);
     reactContext = context;
   }
 
@@ -64,6 +68,24 @@ public class ToastModule extends ReactContextBaseJavaModule {
     constants.put(DURATION_SHORT_KEY, Toast.LENGTH_SHORT);
     constants.put(DURATION_LONG_KEY, Toast.LENGTH_LONG);
     return constants;
+  }
+
+  //for Listening to LifeCycle events
+  @Override
+  public void onHostResume() {
+    show("onHostResume called", Toast.LENGTH_SHORT);
+  }
+
+  @Override
+  public void onHostPause() {
+    show("onHostPause called", Toast.LENGTH_SHORT);
+
+  }
+
+  @Override
+  public void onHostDestroy() {
+    show("onHostDestroy called", Toast.LENGTH_SHORT);
+
   }
 
   //for event
